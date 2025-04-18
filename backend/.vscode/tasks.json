@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Spring Boot: Run",
+            "type": "shell",
+            "command": "mvn spring-boot:run",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Maven: Debug",
+            "type": "shell",
+            "command": "mvn spring-boot:run -Dspring-boot.run.jvmArguments=\"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8080\"",
+            "group": "build",
+            "problemMatcher": []
+
+        },
+        {
+            "label": "Maven: Clean Install",
+            "type": "shell",
+            "command": "mvn clean install",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Maven: Test",
+            "type": "shell",
+            "command": "mvn test",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Maven: Package",
+            "type": "shell",
+            "command": "mvn package",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Maven: Clean",
+            "type": "shell",
+            "command": "mvn clean",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}

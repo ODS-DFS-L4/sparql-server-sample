@@ -1,0 +1,79 @@
+@startuml
+[*] --> Idle
+
+state "Idle" as Idle {
+    state "Waiting For Action" as WaitingForAction
+
+    [*] --> WaitingForAction
+
+    ' Flow of SPARQL Query Processing
+    state "Query Submitted" as QuerySubmitted
+    state "Forward To Service" as ForwardToService
+    state "Retrieve Data" as RetrieveData
+    state "Includes Custom Service Query Airway Reservation" as IncludesCustomServiceQueryAirwayReservation <<choice>>
+    state "Service Executor" as DroneAirwayReservationServiceExecutor
+    state "Drone Airway Reservation API Request" as DroneAirwayReservationAPIRequest
+    state "Drone Airway Reservation API Response" as DroneAirwayReservationAPIResponse
+    state "Airway Reservation RDF Data" as AirwayReservationRDFData
+    state "Includes Custom Service Query Drone Port Reservation" as IncludesCustomServiceQueryDronePortReservation <<choice>>
+    state "Service Executor" as DronePortReservationServiceExecutor
+    state "Drone Port API Request" as DronePortReservationAPIRequest
+    state "Drone Port API Response" as DronePortReservationAPIResponse
+    state "Drone Port Reservation RDF Data" as DronePortReservationRDFData
+    state "Return Results" as ReturnResults
+
+    WaitingForAction --> QuerySubmitted : Query submitted\n(by Crawler/Browser)
+    QuerySubmitted --> ForwardToService : Forward to SPARQL Service
+    ForwardToService --> RetrieveData : Process query & access RDF Data Store
+    RetrieveData --> IncludesCustomServiceQueryAirwayReservation
+    IncludesCustomServiceQueryAirwayReservation --> DroneAirwayReservationServiceExecutor : Includes Custom Service Query Airway Reservation
+    DroneAirwayReservationServiceExecutor --> DroneAirwayReservationAPIRequest : Call Drone Airway Reservation API
+    DroneAirwayReservationAPIRequest --> DroneAirwayReservationAPIResponse : Receive API response
+    DroneAirwayReservationAPIResponse --> AirwayReservationRDFData : Convert To RDF Data
+    IncludesCustomServiceQueryAirwayReservation --> IncludesCustomServiceQueryDronePortReservation
+    AirwayReservationRDFData --> IncludesCustomServiceQueryDronePortReservation
+    IncludesCustomServiceQueryDronePortReservation --> DronePortReservationServiceExecutor : Includes Custom Service Query Drone Port Reservation
+    DronePortReservationServiceExecutor --> DronePortReservationAPIRequest : Call Drone Port API
+    DronePortReservationAPIRequest --> DronePortReservationAPIResponse : Receive API response
+    DronePortReservationAPIResponse --> DronePortReservationRDFData : Convert To RDF Data
+    DronePortReservationRDFData --> ReturnResults : Return results
+    IncludesCustomServiceQueryDronePortReservation --> ReturnResults : Return results
+    ReturnResults --> WaitingForAction : Display results
+
+    ' Flow of MQTT Message Processing
+    state "MQTT Message Received" as MQTTMessageReceived
+    state "Process MQTT" as ProcessMQTT
+    state "Trigger API Service" as TriggerAPIService
+    state "Drone Airway API Request" as DroneAirwayAPIRequest
+    state "Drone Airway API Response" as DroneAirwayAPIResponse
+    state "Drone Port API Request" as DronePortAPIRequest
+    state "Drone Port API Response" as DronePortAPIResponse
+    state "RDF Data" as RDFData
+    state "RDF Data Store" as RDFDataStore
+    state "Has Drone Port" as HasDronePort <<choice>>
+
+    WaitingForAction --> MQTTMessageReceived : MQTT Message received\n(from MQTT Broker)
+    MQTTMessageReceived --> ProcessMQTT : MQTT Subscriber processes message
+    ProcessMQTT --> TriggerAPIService : Trigger API Service
+    TriggerAPIService --> DroneAirwayAPIRequest : Call Drone Airway API
+    DroneAirwayAPIRequest --> DroneAirwayAPIResponse : Receive API response
+    DroneAirwayAPIResponse --> HasDronePort
+    HasDronePort --> RDFData : Convert To RDF Data
+    HasDronePort --> DronePortAPIRequest : Has drone port & Call Drone Port API
+    DronePortAPIRequest --> DronePortAPIResponse : Receive API response
+    DronePortAPIResponse --> RDFData : Convert To RDF Data
+    RDFData -> RDFDataStore : Store RDF Data
+    RDFDataStore --> WaitingForAction : Processing complete
+
+    ' Flow of Drone Port Intrusion API Requests Processing
+    state "Drone Port Intrusion API Request" as DronePortIntrusionAPIRequest
+    state "RDF Data" as DronePortIntrusionRDFData
+    state "RDF Data Store" as DronePortIntrusionRDFDataStore
+
+    WaitingForAction --> DronePortIntrusionAPIRequest : API request\n(by Drone Port Intrusion System)
+    DronePortIntrusionAPIRequest --> DronePortIntrusionRDFData : Convert Drone PortIntrusion Request Data To RDF Data
+    DronePortIntrusionRDFData --> DronePortIntrusionRDFDataStore : Store RDF Data
+    DronePortIntrusionRDFDataStore --> WaitingForAction : Processing complete
+}
+
+@enduml

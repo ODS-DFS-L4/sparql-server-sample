@@ -1,0 +1,39 @@
+<configuration>
+
+  <!-- Read from environment variables with default values -->
+  <springProperty name="TIMEZONE" source="LOGGING_TIMEZONE" defaultValue="Asia/Tokyo" />
+
+  <!-- Log file output -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- Current log file output location -->
+    <file>logs/sparqlservice.log</file>
+
+    <!-- Rotation policy -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- Log file rotation pattern (daily) -->
+      <fileNamePattern>logs/sparqlservice.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+      <!-- Retain logs for a specified number of days -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+
+    <!-- Log output format -->
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss, ${TIMEZONE}} %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Console output -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss, ${TIMEZONE}} %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Root logger configuration -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+  </root>
+
+</configuration>

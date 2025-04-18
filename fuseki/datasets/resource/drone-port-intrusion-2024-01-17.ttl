@@ -1,0 +1,104 @@
+@prefix : <http://example.com/drone-port#> .
+@prefix acr: <http://example.com/aircraft#> .
+@prefix dhw: <http://example.com/drone-highway#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 2025-01-17版
+# ドローンポート立入り検知関連
+
+# クラス定義
+:DronePortIntrusion rdf:type owl:Class ;
+    rdfs:label "ドローンポート立入り情報"@ja ;
+    rdfs:comment "個別のドローンポートに紐づく立入り情報"@ja .
+
+:IntrusionEvent rdf:type owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "立入りイベント"@ja ;
+    rdfs:comment "立入りした障害物ごとに作成"@ja .
+
+:DetectionStatus rdf:type owl:Class ;
+    rdfs:label "立入り状態"@ja ;
+    rdfs:comment "立入りがあるかなくなったかを示す"@ja .
+
+# 各DetectionStatusサブクラス
+:Detected rdf:type :DetectionStatus ;
+    rdfs:label "立入り中"@ja .
+
+:Disappeared rdf:type :DetectionStatus ;
+    rdfs:label "消失済み"@ja .
+
+# プロパティ定義
+
+# DronePortとの関連
+:dronePortId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortIntrusion ;
+    rdfs:range xsd:string ;
+    rdfs:label "ドローンポートID"@ja .
+
+:hasIntrusion rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range :DronePortIntrusion ;
+    rdfs:label "立入り情報を持つ"@ja .
+
+:isIntrusionFor rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePortIntrusion ;
+    rdfs:range :DronePort ;
+    rdfs:label "立入り情報があるドローンポート"@ja ;
+    owl:inverseOf :hasIntrusion .
+
+:timestamp rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortIntrusion ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "立入り検知の時刻"@ja ;
+    rdfs:comment "ISO8601形式"@ja .
+
+:anyDetection rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortIntrusion ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "立入り状態の代表値"@ja ;
+    rdfs:comment "true: 障害物の立入りがある状態, false:障害物の立入りがない状態"@ja .
+
+# IntrusionEventとの関連
+:hasIntrusionEvent rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePortIntrusion ;
+    rdfs:range :IntrusionEvent ;
+    rdfs:label "立入りイベント"@ja .
+
+:isEventOfIntrusion rdf:type owl:ObjectProperty ;
+    rdfs:domain :IntrusionEvent ;
+    rdfs:range :DronePortIntrusion ;
+    rdfs:label "属する立入り情報"@ja ;
+    owl:inverseOf :hasIntrusionEvent .
+
+:reportEndpointUrl rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortIntrusion ;
+    rdfs:range xsd:string ;
+    rdfs:label "レポートファイルのエンドポイントURL"@ja .
+
+# IntrusionEvent用
+:objectId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :IntrusionEvent ;
+    rdfs:range xsd:string ;
+    rdfs:label "障害物識別子"@ja .
+
+:objectType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :IntrusionEvent ;
+    rdfs:range xsd:string ;
+    rdfs:label "障害物種別"@ja ;
+    rdfs:comment "種別は車両・人物・未知物体などを示す情報"@ja .
+
+# detectはリテラルとオブジェクト2種類用意
+:detectionStatus rdf:type owl:DatatypeProperty ;
+    rdfs:domain :IntrusionEvent ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "障害物を検出したか, なくなったかを示す"@ja ;
+    rdfs:comment "true: 立入りがある状態, false: 立入りがなくなった状態"@ja .
+
+:hasDetectionStatus rdf:type owl:ObjectProperty ;
+    rdfs:domain :IntrusionEvent ;
+    rdfs:range :DetectionStatus ;
+    rdfs:label "障害物を検出したか, なくなったかを示す"@ja .

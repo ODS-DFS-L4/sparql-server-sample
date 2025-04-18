@@ -1,0 +1,52 @@
+@startuml
+left to right direction
+
+actor "ドローン航路利用者" as DroneAirwayUser
+actor "ドローン航路画定システム利用者" as DroneAirwayDesignSystemUser
+actor "ドローン航路予約システム" as DroneAirwayReservationSystem
+actor "ドローンポート予約システム" as DronePortReservationSystem
+actor "ドローンポート侵入検知システム" as DronePortIntrusionSystem
+
+rectangle "ドローン航路利用者システム" {
+  (ドローン航路情報取得) as DAUC1
+  (ドローン航路予約情報取得) as DAUC2
+  (ドローンポート予約情報取得) as DAUC3
+  (ドローンポート侵入検知情報取得) as DAUC4
+}
+
+rectangle "Spring Boot Jena Prototype" {
+  (ドローン航路/ドローンポートRDFデータ更新) as SBJPUC1
+  (ドローン航路予約RDFデータ取得) as SBJPUC2
+  (ドローンポート予約RDFデータ取得) as SBJPUC3
+  (ドローンポート侵入検知RDFデータ更新) as SBJPUC4
+}
+
+rectangle "ドローン航路システム" {
+  (ドローン航路/ドローンポート情報更新) as DASUC1
+  (ドローン航路予約情報更新) as DASUC2
+  (ドローンポート予約情報更新) as DASUC3
+  (ドローン航路予約情報取得) as DASUC4
+  (ドローンポート予約情報取得) as DASUC5
+}
+
+DroneAirwayUser -- DAUC1
+DroneAirwayUser -- DAUC2
+DroneAirwayUser -- DAUC3
+DroneAirwayUser -- DAUC4
+
+DAUC1 -- SBJPUC1
+DAUC2 -- SBJPUC2
+DAUC3 -- SBJPUC3
+DAUC4 -- SBJPUC4
+
+DASUC1 --> SBJPUC1
+DASUC4 -- SBJPUC2
+DASUC5 -- SBJPUC3
+
+DroneAirwayDesignSystemUser -- DASUC1
+DroneAirwayReservationSystem -- DASUC2
+DronePortReservationSystem -- DASUC3
+
+SBJPUC4 -- DronePortIntrusionSystem
+
+@enduml

@@ -1,0 +1,266 @@
+@prefix : <http://example.com/drone-highway#> .
+@prefix acr: <http://example.com/aircraft#> .
+@prefix dp: <http://example.com/drone-port#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 2025-02-05版
+# クラス定義
+:AirwayAdministrator rdf:type owl:Class ;
+    rdfs:label "航路運営者"@ja .
+
+:Airway rdf:type owl:Class ;
+    rdfs:label "航路"@ja .
+
+:AirwaySection rdf:type owl:Class ;
+    rdfs:label "航路区画"@ja .
+
+:AirwayJunction rdf:type owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "ジャンクション"@ja .
+
+:AirwayArea rdf:type owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "通過位置"@ja .
+
+:DeviationArea rdf:type owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "逸脱範囲"@ja .
+
+:FallToleranceRange rdf:type owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "最大落下許容範囲"@ja .
+
+:Coordinate rdf:type owl:Class ;
+    rdfs:label "位置情報"@ja .
+
+# 型だけ定義
+:FallSpace rdf:type owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "落下空間"@ja .
+
+# プロパティ定義
+
+# AirwayAdministrator関連
+:airwayAdministratorId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayAdministrator ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路運営者ID"@ja .
+
+:businessNumber rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayAdministrator ;
+    rdfs:range xsd:string ;
+    rdfs:label "事業者番号"@ja .
+
+:hasAirway rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwayAdministrator ;
+    rdfs:range :Airway ;
+    rdfs:label "航路を持つ"@ja ;
+    owl:inverseOf :belongsToAirwayAdministrator .
+
+:hasFallToleranceRange rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwayAdministrator ;
+    rdfs:range :FallToleranceRange ;
+    rdfs:label "最大落下許容範囲を持つ"@ja ;
+    owl:inverseOf :belongsToAirwayAdministrator .
+
+:belongsToAirwayAdministrator rdf:type owl:ObjectProperty ;
+    rdfs:domain :BelongsToAirwayAdministratorDomain ;
+    rdfs:range :AirwayAdministrator ;
+    rdfs:label "航路運営者に属する"@ja .
+
+:BelongsToAirwayAdministratorDomain rdf:type owl:Class ;
+    owl:unionOf :ListOfAirwayFallToleranceRange .
+
+# 名前付きリスト :ListOfAirwayFallToleranceRange の定義(リストのスコーレム化)
+:ListOfAirwayFallToleranceRange a rdf:List ;
+    rdf:first :Airway ;
+    rdf:rest :ListOfAirwayFallToleranceRangeRest .
+
+:ListOfAirwayFallToleranceRangeRest a rdf:List ;
+    rdf:first :FallToleranceRange ;
+    rdf:rest rdf:nil .
+
+# Airway関連
+
+:airwayId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路ID"@ja .
+
+:airwayName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路名"@ja .
+
+:flightPurpose rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range xsd:string ;
+    rdfs:label "飛行目的"@ja .
+
+:createdAt rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range xsd:datetime ;
+    rdfs:label "登録日時"@ja .
+
+:updatedAt rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range xsd:datetime ;
+    rdfs:label "更新日時"@ja .
+
+:droneId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路を利用可能なドローンの機体情報ID"@ja .
+
+:hasAvailableDrone rdf:type owl:ObjectProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range acr:Aircraft ;
+    rdfs:label "航路を利用可能なドローン"@ja .
+
+:hasAirwayJunction rdf:type owl:ObjectProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range :AirwayJunction ;
+    rdfs:label "ジャンクションを持つ"@ja ;
+    owl:inverseOf :belongsToAirway .
+
+:hasAirwaySection rdf:type owl:ObjectProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range :AirwaySection ;
+    rdfs:label "航路区画を持つ"@ja ;
+    owl:inverseOf :belongsToAirway .
+
+:belongsToAirway rdf:type owl:ObjectProperty ;
+    rdfs:domain :BelongsToAirwayDomain ;
+    rdfs:range :Airway ;
+    rdfs:label "航路に属する"@ja .
+
+:BelongsToAirwayDomain rdf:type owl:Class ;
+    owl:unionOf :ListOfAirwayJunctionAirwaySection .
+
+# 名前付きリスト :ListOfAirwayJunctionAirwaySection の定義(リストのスコーレム化)
+:ListOfAirwayJunctionAirwaySection a rdf:List ;
+    rdf:first :AirwayJunction ;
+    rdf:rest :ListOfAirwayJunctionAirwaySectionRest .
+
+:ListOfAirwayJunctionAirwaySectionRest a rdf:List ;
+    rdf:first :AirwaySection ;
+    rdf:rest rdf:nil .
+
+# AirwayJunction関連
+:airwayJunctionId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayJunction ;
+    rdfs:range xsd:string ;
+    rdfs:label "ジャンクションID"@ja .
+
+:airwayJunctionName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayJunction ;
+    rdfs:range xsd:string ;
+    rdfs:label "ジャンクション名"@ja .
+
+:hasAirwayArea rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwayJunction ;
+    rdfs:range :AirwayArea ;
+    rdfs:label "通過位置を持つ"@ja ;
+    owl:inverseOf :belongsToAirwayJunction .
+
+:hasDeviationArea rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwayJunction ;
+    rdfs:range :DeviationArea ;
+    rdfs:label "逸脱範囲を持つ"@ja ;
+    owl:inverseOf :belongsToAirwayJunction .
+
+:belongsToAirwayJunction rdf:type owl:ObjectProperty ;
+    rdfs:domain :BelongsToAirwayJunctionDomain ;
+    rdfs:range :AirwayJunction ;
+    rdfs:label "ジャンクションに属する"@ja .
+
+:BelongsToAirwayJunctionDomain rdf:type owl:Class ;
+    owl:unionOf :ListOfAirwayAreaDeviationArea .
+
+# 名前付きリスト :ListOfAirwayAreaDeviationArea の定義(リストのスコーレム化)
+:ListOfAirwayAreaDeviationArea a rdf:List ;
+    rdf:first :AirwayArea ;
+    rdf:rest :ListOfAirwayAreaDeviationAreaRest .
+
+:ListOfAirwayAreaDeviationAreaRest a rdf:List ;
+    rdf:first :DeviationArea ;
+    rdf:rest rdf:nil .
+
+# AirwaySection関連
+:airwaySectionId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwaySection ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路区画ID"@ja .
+
+:airwaySectionName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwaySection ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路区画名"@ja .
+
+:connectsJunction rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwaySection ;
+    rdfs:range :AirwayPoint ;
+    rdfs:label "ジャンクションを接続する"@ja .
+
+:dronePortId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwaySection ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路区画に紐づいているドローンポートID"@ja .
+
+:hasDronePort rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwaySection ;
+    rdfs:range dp:DronePort ;
+    rdfs:label "航路区画に紐づいているドローンポート"@ja .
+
+:belongsToAirwaySection rdf:type owl:ObjectProperty ;
+    rdfs:domain dp:DronePort ;
+    rdfs:range :AirwaySection ;
+    rdfs:label "ドローンポートに紐づいている航路区画"@ja .
+
+# FallToleranceRangeのプロパティ
+:areaName rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:label "エリア名称"@ja .
+
+:useAirway rdf:type owl:ObjectProperty ;
+    rdfs:domain :Airway ;
+    rdfs:range :Airway ;
+    rdfs:label "使用中航路"@ja .
+
+# 位置情報
+:coordinates rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:String ;
+    rdfs:label "位置情報"@ja .
+
+:hasCoordinate rdf:type owl:ObjectProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range :Coordinate ;
+    rdfs:label "位置情報を持つ"@ja .
+
+:latitude rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "緯度"@ja .
+
+:longitude rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "経度"@ja .
+
+:altitude rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "高度"@ja .
+
+# GeoSPARQL関連のプロパティ
+:hasGeometry rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf geo:hasGeometry ;
+    rdfs:domain geo:Feature ;
+    rdfs:range geo:Geometry ;
+    rdfs:label "GeoJSONジオメトリを持つ"@ja .

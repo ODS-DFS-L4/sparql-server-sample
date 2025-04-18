@@ -1,0 +1,52 @@
+@startuml
+left to right direction
+
+actor "Drone Airway User" as DroneAirwayUser
+actor "Drone Airway Design System User" as DroneAirwayDesignSystemUser
+actor "Drone Airway Reservation System" as DroneAirwayReservationSystem
+actor "Drone Port Reservation System" as DronePortReservationSystem
+actor "Drone Port Intrusion System" as DronePortIntrusionSystem
+
+rectangle "Drone Airway User System" {
+  (Fetch Drone Airway Data) as DAUC1
+  (Fetch Drone Airway Reservation Data) as DAUC2
+  (Fetch Drone Port Reservation Data) as DAUC3
+  (Fetch Drone Port Intrusion Data) as DAUC4
+}
+
+rectangle "Spring Boot Jena Prototype" {
+  (Update Drone Airway/Drone Port RDF Data) as SBJPUC1
+  (Fetch Drone Airway Reservation RDF Data) as SBJPUC2
+  (Fetch Drone Port Reservation RDF Data) as SBJPUC3
+  (Update Drone Port Intrusion RDF Data) as SBJPUC4
+}
+
+rectangle "Drone Airway System" {
+  (Update Drone Airway/Drone Port Data) as DASUC1
+  (Update Drone Airway Reservation Data) as DASUC2
+  (Update Drone Port Reservation Data) as DASUC3
+  (Fetch Drone Airway Reservation Data) as DASUC4
+  (Fetch Drone Port Reservation Data) as DASUC5
+}
+
+DroneAirwayUser -- DAUC1
+DroneAirwayUser -- DAUC2
+DroneAirwayUser -- DAUC3
+DroneAirwayUser -- DAUC4
+
+DAUC1 -- SBJPUC1
+DAUC2 -- SBJPUC2
+DAUC3 -- SBJPUC3
+DAUC4 -- SBJPUC4
+
+DASUC1 --> SBJPUC1
+DASUC4 -- SBJPUC2
+DASUC5 -- SBJPUC3
+
+DroneAirwayDesignSystemUser -- DASUC1
+DroneAirwayReservationSystem -- DASUC2
+DronePortReservationSystem -- DASUC3
+
+SBJPUC4 -- DronePortIntrusionSystem
+
+@enduml

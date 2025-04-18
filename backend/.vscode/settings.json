@@ -1,0 +1,22 @@
+{
+  "java.compile.nullAnalysis.mode": "automatic",
+  "cSpell.words": [
+    "asyncapi",
+    "Configurer",
+    "droneport",
+    "DTOV",
+    "fuseki",
+    "mqtt",
+    "NTRIPLES",
+    "Paho",
+    "qexec",
+    "rawtypes",
+    "rdfs",
+    "RDFXML",
+    "revitie",
+    "Sparql",
+    "sparqlservice",
+    "springframework",
+    "triplestore"
+  ]
+}

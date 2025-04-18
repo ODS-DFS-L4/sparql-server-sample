@@ -1,0 +1,16 @@
+services:
+  fuseki-extension:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: java_dev_container
+    working_dir: /app
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+      - maven-cache:/root/.m2
+    command: tail -f /dev/null
+
+volumes:
+  maven-cache:

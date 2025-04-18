@@ -1,0 +1,54 @@
+@prefix : <http://example.com/drone-highway#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 2025-01-06版
+# クラス定義
+:AirwayReservation rdf:type owl:Class ;
+    rdfs:label "航路予約"@ja .
+
+# プロパティ定義
+:airwayReservationId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayReservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "航路予約ID"@ja .
+
+:operatorId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayReservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "運航事業者ID"@ja .
+
+# airwaySectionはリテラルとオブジェクトの2種類用意
+:reservedAirwaySectionId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayReservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "予約した航路区画ID"@ja .
+
+:reservesAirwaySection rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwayReservation ;
+    rdfs:range :AirwaySection ;
+    rdfs:label "予約した航路区画"@ja .
+
+:reservedByAirwayReservation rdf:type owl:ObjectProperty ;
+    rdfs:domain :AirwaySection ;
+    rdfs:range :AirwayReservation ;
+    rdfs:label "航路予約による予約"@ja ;
+    owl:inverseOf :reservesAirwaySection .
+
+:startsAt rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayReservation ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "予約開始日時"@ja .
+
+:endsAt rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayReservation ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "予約終了日時"@ja .
+
+:reservedAt rdf:type owl:DatatypeProperty ;
+    rdfs:domain :AirwayReservation ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "予約登録日時"@ja .

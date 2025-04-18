@@ -1,0 +1,117 @@
+@prefix : <http://example.com/drone-port#> .
+@prefix acr: <http://example.com/aircraft#> .
+@prefix dhw: <http://example.com/drone-highway#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 2025-01-17版
+# ドローンポート予約関連
+
+# クラス定義
+:DronePortReservation rdf:type owl:Class;
+    rdfs:label "ドローンポート予約"@ja .
+
+:ReservationUsageType rdf:type owl:Class ;
+    rdfs:label "ドローンポートの利用形態"@ja ;
+    rdfs:comment "1:離陸ポート (TakeoffPort)、2:着陸ポート (LandingPort)、3:その他 (OtherUsage)"@ja .
+
+# 各ReservationUsageTypeサブクラス
+:TakeoffPort rdf:type :ReservationUsageType ;
+    rdfs:label "離陸ポート"@ja .
+
+:LandingPort rdf:type :ReservationUsageType ;
+    rdfs:label "着陸ポート"@ja .
+
+:OtherUsage rdf:type :ReservationUsageType ;
+    rdfs:label "その他"@ja .
+
+# プロパティ定義
+:dronePortReservationId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "予約ID"@ja ;
+    rdfs:comment "ドローンポート予約を一意に識別するID"@ja .
+
+:reservationTimeFrom rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "予約開始日時"@ja ;
+    rdfs:comment "ISO8601形式"@ja .
+
+:reservationTimeTo rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "予約終了日時"@ja ;
+    rdfs:comment "ISO8601形式"@ja .
+
+# Aircraftとの関連
+:aircraftId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:string ;
+    rdfs:label "機体ID"@ja .
+:reservesAircraft rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range acr:Aircraft ;
+    rdfs:label "予約している機体"@ja .
+
+:isReservedBy rdf:type owl:ObjectProperty ;
+    rdfs:domain acr:Aircraft ;
+    rdfs:range :DronePortReservation ;
+    rdfs:label "ドローンを使用するドローンポート予約"@ja ;
+    owl:inverseOf :reservesAircraft .
+
+# Route(Airway)Reservationとの関連
+:routeReservationId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "紐づく航路予約ID"@ja .
+
+:associatedRouteReservation rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range dhw:AirwayReservation ;
+    rdfs:label "紐づく航路予約"@ja .
+
+:associatedDronePortReservation rdf:type owl:ObjectProperty ;
+    rdfs:domain dhw:AirwayReservation ;
+    rdfs:range :DronePortReservation ;
+    rdfs:label "紐づくドローンポート予約"@ja ;
+    owl:inverseOf :associatedRouteReservation .
+
+
+# DronePortとの関連
+:dronePortId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "ドローンポートID"@ja .
+:reservesDronePort rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range :DronePort ;
+    rdfs:label "予約しているドローンポート"@ja .
+
+:hasDronePortReservation rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range :DronePortReservation ;
+    rdfs:label "持っている予約"@ja ;
+    rdfs:comment "ドローンポートに関連付けられた予約"@ja ;
+    owl:inverseOf :reservesDronePort .
+
+# reservationUsageTypeはリテラル(数字と文字列)とオブジェクトの3種類用意
+:reservationUsageType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range xsd:integer ;
+    rdfs:label "利用形態"@ja ;
+    rdfs:comment "1:離陸ポート, 2:着陸ポート, 3:その他"@ja .
+
+:reservationUsageTypeName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "利用形態(文字列)"@ja ;
+    rdfs:comment "離陸ポート, 着陸ポート, その他"@ja .
+
+:hasReservationUsageType rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePortReservation ;
+    rdfs:range :ReservationUsageType ;
+    rdfs:label "利用形態"@ja .

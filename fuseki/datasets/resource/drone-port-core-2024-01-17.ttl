@@ -1,0 +1,208 @@
+@prefix : <http://example.com/drone-port#> .
+@prefix acr: <http://example.com/aircraft#> .
+@prefix dhw: <http://example.com/drone-highway#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 2025-01-17版
+
+# クラス定義
+:DronePort rdf:type owl:Class;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "ドローンポート"@ja .
+
+:PortType rdf:type owl:Class ;
+    rdfs:label "ポート形状"@ja ;
+    rdfs:comment "1:ドローンポート (NormalDronePort)、2:離発着場 (TakeoffLandingSite)、0:緊急離着陸点 (EmergencyLandingSite)"@ja .
+
+:PortUsageType rdf:type owl:Class ;
+    rdfs:label "ドローンポート使用用途"@ja ;
+    rdfs:comment "1:駐機場 (ParkingUsage)、2:緊急着陸地点 (EmergencyLanding)"@ja .
+
+:DronePortType rdf:type owl:Class ;
+    rdfs:label "ドローンポート種別"@ja ;
+    rdfs:comment "登録時にシステム側で付与 1:自システム管理 (SelfManagedDronePort), 2:VIS管理 (VISManagedDronePort), 3:他事業者管理 (ThirdPartyManagedDronePort)"@ja .
+
+# 各PortTypeサブクラス
+:NormalDronePort rdf:type :PortType ;
+    rdfs:label "ドローンポート"@ja .
+
+:TakeoffLandingSite rdf:type :PortType ;
+    rdfs:label "離発着場"@ja .
+
+:EmergencyLandingSite rdf:type :PortType ;
+    rdfs:label "緊急離着陸点"@ja .
+
+# 各PortUsageTypeサブクラス
+:ParkingUsage rdf:type :PortUsageType ;
+    rdfs:label "駐機場"@ja .
+
+:EmergencyLanding rdf:type :PortUsageType ;
+    rdfs:label "緊急着陸地点"@ja .
+
+# 各DronePortTypeサブクラス
+:SelfManagedDronePort rdf:type :DronePortType ;
+    rdfs:label "自システム管理ドローンポート"@ja .
+
+:VISManagedDronePort rdf:type :DronePortType ;
+    rdfs:label "VIS管理ドローンポート"@ja .
+
+:ThirdPartyManagedDronePort rdf:type :DronePortType ;
+    rdfs:label "他事業者管理ドローンポート"@ja .
+
+# プロパティ定義
+:dronePortId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "ドローンポートID"@ja .
+:dronePortName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "ドローンポート名"@ja .
+
+:address rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "設置場所住所"@ja .
+:manufacturer rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "製造メーカー"@ja .
+
+:dronePortManufacturerId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "ドローンポートメーカーID"@ja .
+
+:visDronePortCompanyId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "VISドローンポート事業者ID"@ja .
+
+# storedAircraftはリテラルとオブジェクトの2種類容易
+:storedAircraftId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "格納中機体ID"@ja .
+
+:storesAircraft rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range acr:Aircraft ;
+    rdfs:label "格納中機体"@ja .
+
+:serialNumber rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "製造番号"@ja .
+
+
+# portTypeはリテラル(数字と文字列)とオブジェクトの3種類用意
+:portType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:integer ;
+    rdfs:label "ポート形状"@ja ;
+    rdfs:comment "1:ドローンポート、2:離発着場、0:緊急離着陸点"@ja .
+
+:portTypeName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "ポート形状(文字列)"@ja ;
+    rdfs:comment "1:ドローンポート、2:離発着場、0:緊急離着陸点"@ja .
+
+:hasPortType rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range :PortType ;
+    rdfs:label "ポート形状"@ja .
+
+:supportDroneType  rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "対応機器"@ja ;
+    rdfs:comment "着陸可能な機体の種類等を設定"@ja .
+
+# portUsageTypeはリテラル(数字と文字列)とオブジェクトの3種類用意
+:portUsageType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:integer ;
+    rdfs:label "使用用途"@ja ;
+    rdfs:comment "1:駐機場, 2:緊急着陸地点"@ja .
+:portUsageTypeName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "使用用途(文字列)"@ja ;
+    rdfs:comment "駐機場, 緊急着陸地点"@ja .
+
+:hasPortUsageType rdf:type owl:ObjectProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range :PortUsageType ;
+    rdfs:label "使用用途"@ja .
+
+:activeStatus rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "動作状況"@ja ;
+    rdfs:comment "使用可能, 準備中, 着陸済みetc"@ja .
+
+# dronePortTypeはリテラル(数字と文字列)とオブジェクトの3種類用意
+:dronePortType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:integer ;
+    rdfs:label "ドローンポート種別"@ja ;
+    rdfs:comment "登録時にシステム側で付与 1:自システム管理, 2:VIS管理, 3:他事業者管理"@ja .
+
+:dronePortTypeName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "ドローンポート種別(文字列)"@ja ;
+    rdfs:comment "自システム管理, VIS管理, 他事業者管理"@ja .
+:hasDronePortType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range :DronePortType ;
+    rdfs:label "ドローンポート種別"@ja .
+
+:inactiveTimeFrom rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "使用不可開始日時"@ja .
+
+:inactiveTimeTo	 rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "使用不可終了日時"@ja .
+
+:imageData rdf:type owl:DatatypeProperty ;
+    rdfs:domain :DronePort ;
+    rdfs:range xsd:string ;
+    rdfs:label "画像データ"@ja ;
+    rdfs:comment "画像データをbase64形式で設定する"@ja .
+
+
+:updateTime rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "更新日時"@ja .
+
+# GeoSPARQL関連のプロパティ
+:hasGeometry rdf:type owl:ObjectProperty ;
+    rdfs:subPropertyOf geo:hasGeometry ;
+    rdfs:domain geo:Feature ;
+    rdfs:range geo:Geometry ;
+    rdfs:label "GeoJSONジオメトリを持つ"@ja .
+
+# GeoSparqlとは別に座標用のリテラルプロパティを用意
+:latitude rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "緯度"@ja .
+
+:longitude rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "経度"@ja .
+:altitude rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "高度"@ja .

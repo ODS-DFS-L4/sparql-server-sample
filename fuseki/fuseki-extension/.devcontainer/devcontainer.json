@@ -1,0 +1,37 @@
+{
+    "name": "Fuseki Extension Dev",
+    "dockerComposeFile": [
+        "../docker-compose.yml"
+    ],
+    "service": "fuseki-extension",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vscjava.vscode-java-pack",
+                "redhat.java",
+                "pivotal.vscode-spring-boot",
+                "redhat.vscode-yaml",
+                "ms-azuretools.vscode-docker",
+                "streetsidesoftware.code-spell-checker",
+                "Oracle.oracle-java",
+                "vmware.vscode-boot-dev-pack",
+                "redhat.vscode-xml"
+            ],
+            "settings": {
+                "java.configuration.updateBuildConfiguration": "automatic",
+                "java.compile.nullAnalysis.mode": "automatic",
+                "java.format.settings.url": ".vscode/java-formatter.xml",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": true
+                }
+            }
+        }
+    },
+    "remoteUser": "developer",
+    // "postCreateCommand": "sudo chown developer:developer /app",
+    "initializeCommand": "ls", // https://github.com/microsoft/vscode-remote-release/issues/9302#issuecomment-1854476541
+    "features": {
+    }
+}

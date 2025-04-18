@@ -1,0 +1,79 @@
+@startuml
+[*] --> Idle
+
+state "待機" as Idle {
+    state "アクション待機中" as WaitingForAction
+
+    [*] --> WaitingForAction
+
+    ' SPARQLクエリ処理のフロー
+    state "クエリ送信" as QuerySubmitted
+    state "サービスへ転送" as ForwardToService
+    state "データ取得" as RetrieveData
+    state "カスタムサービスクエリに航路予約を含むか" as IncludesCustomServiceQueryAirwayReservation <<choice>>
+    state "Service Executor" as DroneAirwayReservationServiceExecutor
+    state "ドローン航路予約APIリクエスト" as DroneAirwayReservationAPIRequest
+    state "ドローン航路予約APIレスポンス" as DroneAirwayReservationAPIResponse
+    state "航路予約RDFデータ" as AirwayReservationRDFData
+    state "カスタムサービスクエリにドローンポート予約を含むか" as IncludesCustomServiceQueryDronePortReservation <<choice>>
+    state "Service Executor" as DronePortReservationServiceExecutor
+    state "ドローンポートAPIリクエスト" as DronePortReservationAPIRequest
+    state "ドローンポートAPIレスポンス" as DronePortReservationAPIResponse
+    state "Drone Port Reservation RDF Data" as DronePortReservationRDFData
+    state "結果を返す" as ReturnResults
+
+    WaitingForAction --> QuerySubmitted : クエリ送信\n（クローラ/ブラウザ）
+    QuerySubmitted --> ForwardToService : SPARQLサービスへ転送
+    ForwardToService --> RetrieveData : クエリ処理 & RDFデータストアへアクセス
+    RetrieveData --> IncludesCustomServiceQueryAirwayReservation
+    IncludesCustomServiceQueryAirwayReservation --> DroneAirwayReservationServiceExecutor : 航路予約クエリを含む
+    DroneAirwayReservationServiceExecutor --> DroneAirwayReservationAPIRequest : ドローン航路予約APIを呼び出し
+    DroneAirwayReservationAPIRequest --> DroneAirwayReservationAPIResponse : APIレスポンス受信
+    DroneAirwayReservationAPIResponse --> AirwayReservationRDFData : RDFデータへ変換
+    IncludesCustomServiceQueryAirwayReservation --> IncludesCustomServiceQueryDronePortReservation
+    AirwayReservationRDFData --> IncludesCustomServiceQueryDronePortReservation
+    IncludesCustomServiceQueryDronePortReservation --> DronePortReservationServiceExecutor : ドローンポート予約クエリを含む
+    DronePortReservationServiceExecutor --> DronePortReservationAPIRequest : ドローンポートAPIを呼び出し
+    DronePortReservationAPIRequest --> DronePortReservationAPIResponse : APIレスポンス受信
+    DronePortReservationAPIResponse --> DronePortReservationRDFData : RDFデータへ変換
+    DronePortReservationRDFData --> ReturnResults : 結果を返却
+    IncludesCustomServiceQueryDronePortReservation --> ReturnResults : 結果を返却
+    ReturnResults --> WaitingForAction : 結果を表示
+
+    ' MQTTメッセージ処理のフロー
+    state "MQTTメッセージ受信" as MQTTMessageReceived
+    state "MQTT処理" as ProcessMQTT
+    state "APIサービスのトリガー" as TriggerAPIService
+    state "ドローン航路APIリクエスト" as DroneAirwayAPIRequest
+    state "ドローン航路APIレスポンス" as DroneAirwayAPIResponse
+    state "ドローンポートAPIリクエスト" as DronePortAPIRequest
+    state "ドローンポートAPIレスポンス" as DronePortAPIResponse
+    state "RDFデータ" as RDFData
+    state "RDFデータストア" as RDFDataStore
+    state "ドローンポートを含むか" as HasDronePort <<choice>>
+
+    WaitingForAction --> MQTTMessageReceived : MQTTメッセージ受信\n（MQTTブローカー）
+    MQTTMessageReceived --> ProcessMQTT : MQTTサブスクライバがメッセージ処理
+    ProcessMQTT --> TriggerAPIService : APIサービスのトリガー
+    TriggerAPIService --> DroneAirwayAPIRequest : ドローン航路APIを呼び出し
+    DroneAirwayAPIRequest --> DroneAirwayAPIResponse : APIレスポンス受信
+    DroneAirwayAPIResponse --> HasDronePort
+    HasDronePort --> RDFData : RDFデータへ変換
+    HasDronePort --> DronePortAPIRequest : ドローンポートあり & ドローンポートAPIを呼び出し
+    DronePortAPIRequest --> DronePortAPIResponse : APIレスポンス受信
+    DronePortAPIResponse --> RDFData : RDFデータへ変換
+    RDFData -> RDFDataStore : RDFデータを保存
+    RDFDataStore --> WaitingForAction : 処理完了
+
+    ' ドローンポート侵入検知APIリクエスト処理のフロー
+    state "ドローンポート侵入検知APIリクエスト" as DronePortIntrusionAPIRequest
+    state "RDFデータ" as DronePortIntrusionRDFData
+    state "RDFデータストア" as DronePortIntrusionRDFDataStore
+
+    WaitingForAction --> DronePortIntrusionAPIRequest : APIリクエスト\n（ドローンポート侵入検知システム）
+    DronePortIntrusionAPIRequest --> DronePortIntrusionRDFData : ドローンポート侵入検知リクエストデータをRDFデータへ変換
+    DronePortIntrusionRDFData --> DronePortIntrusionRDFDataStore : RDFデータを保存
+    DronePortIntrusionRDFDataStore --> WaitingForAction : 処理完了
+}
+
+@enduml

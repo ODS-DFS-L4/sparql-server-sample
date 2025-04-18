@@ -1,0 +1,77 @@
+@startuml
+skinparam componentStyle uml2
+
+left to right direction
+
+component "Crawler" as Crawler
+component "Browser" as Browser
+
+frame "Spring Boot Jena Prototype" {
+
+  frame "Spring Boot" {
+    component "SPARQL Endpoint" as SparqlEndpoint
+    component "SPARQL Service" as SparqlService
+    component "Rdf Service" as RdfService
+    component "MQTT Subscriber" as MqttSubscriber
+    component "API Service" as ApiService
+    component "Repository" as Repository
+  }
+
+  frame "Apache Jena Fuseki" {
+    component "Fuseki Server Endpoint" as FusekiServerEndpoint
+    component "Custom Service Executor" as CustomServiceExecutor
+    component "RDF Data Store" as RdfDataStore
+  }
+}
+
+frame "Drone Airway System" {
+  together {
+    component "MQTT Broker" as MqttBroker
+    component "Drone Airway API" as DroneAirwayAPI
+    component "Drone Airway Reservation API" as DroneAirwayReservationAPI
+    component "Drone Port API" as DronePortAPI
+  }
+}
+
+Crawler --> SparqlEndpoint
+SparqlEndpoint --> Crawler
+Browser --> SparqlEndpoint
+SparqlEndpoint --> Browser
+
+SparqlEndpoint --> SparqlService
+SparqlService --> SparqlEndpoint
+
+SparqlService --> Repository
+Repository --> SparqlService
+
+
+Repository --> FusekiServerEndpoint
+FusekiServerEndpoint --> Repository
+
+
+FusekiServerEndpoint --> RdfDataStore
+RdfDataStore --> FusekiServerEndpoint
+
+FusekiServerEndpoint --> CustomServiceExecutor
+CustomServiceExecutor --> FusekiServerEndpoint
+
+
+MqttBroker --> MqttSubscriber
+MqttSubscriber --> RdfService
+
+RdfService --> ApiService
+ApiService --> DroneAirwayAPI
+DroneAirwayAPI --> ApiService
+ApiService --> DronePortAPI
+DronePortAPI --> ApiService
+
+ApiService --> RdfService
+RdfService --> Repository
+
+CustomServiceExecutor --> DronePortAPI
+DronePortAPI --> CustomServiceExecutor
+
+CustomServiceExecutor --> DroneAirwayReservationAPI
+DroneAirwayReservationAPI --> CustomServiceExecutor
+
+@enduml

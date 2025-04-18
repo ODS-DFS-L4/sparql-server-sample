@@ -1,0 +1,147 @@
+@prefix : <http://example.com/aircraft#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 2025-01-06版
+# クラス定義
+:Aircraft rdf:type owl:Class ;
+    rdfs:label "ドローン"@ja .
+
+:AircraftType rdf:type owl:Class ;
+    rdfs:label "機体の種類"@ja .
+
+:OwnerType rdf:type owl:Class ;
+    rdfs:label "機体所有種別"@ja ;
+    rdfs:comment "1:事業者所有機体、2:レンタル機体"@ja .
+
+# 各AircraftType
+:FixedWingAircraft rdf:type :AircraftType ;
+    rdfs:label "飛行機"@ja .
+
+:Helicopter rdf:type :AircraftType ;
+    rdfs:label "回転翼航空機（ヘリコプター）"@ja .
+
+:MultiRotor rdf:type :AircraftType ;
+    rdfs:label "回転翼航空機（マルチローター）"@ja .
+
+:OtherRotorcraft rdf:type :AircraftType ;
+    rdfs:label "回転翼航空機（その他）"@ja .
+
+:Glider rdf:type :AircraftType ;
+    rdfs:label "滑空機"@ja .
+
+:Airship rdf:type :AircraftType ;
+    rdfs:label "飛行船"@ja .
+
+
+# 各OwnerType
+:OperatorOwned rdf:type :OwnerType ;
+    rdfs:label "事業者所有機体"@ja .
+
+:RentalOwned rdf:type :OwnerType ;
+    rdfs:label "レンタル機体"@ja .
+
+# プロパティ定義
+:aircraftId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:string ;
+    rdfs:label "機体ID"@ja .
+
+:aircraftName rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:string ;
+    rdfs:label "機体名"@ja ;
+    rdfs:comment "機体に付与する任意の名称"@ja .
+
+:manufacturer rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:string ;
+    rdfs:label "製造メーカー"@ja .
+
+:manufacturingNumber rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:string ;
+    rdfs:label "製造番号"@ja ;
+    rdfs:comment "製造メーカーが機体に付与したシリアル番号など"@ja .
+
+# aircraftTypeはリテラルとオブジェクト2種類用意
+:aircraftType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:integer ;
+    rdfs:label "機体の種類"@ja ;
+    rdfs:comment "1:飛行機、2:回転翼航空機（ヘリコプター）、3:回転翼航空機（マルチローター）、4:回転翼航空機（その他）、5:滑空機、6:飛行船"@ja .
+
+#
+:hasAircraftType rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range :AircraftType ;
+    rdfs:label "機体の種類"@ja .
+
+:maxTakeoffWeight rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "最大離陸重量"@ja ;
+    rdfs:comment "機体が離陸する際の最大重量"@ja .
+
+:bodyWeight rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "重量"@ja ;
+    rdfs:comment "機体の重量"@ja .
+
+:maxFlightSpeed rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "最大速度"@ja ;
+    rdfs:comment "機体の最大飛行速度"@ja .
+
+:maxFlightTime rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "最大飛行時間"@ja ;
+    rdfs:comment "機体の最大飛行時間"@ja .
+
+:certification rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "認証"@ja ;
+    rdfs:comment "機体認証の有無"@ja .
+
+:dipsRegistrationCode rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:string ;
+    rdfs:label "DIPS登録記号"@ja .
+
+# ownerTypeはリテラルとオブジェクト2種類用意
+:ownerType rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:integer ;
+    rdfs:label "機体所有種別"@ja ;
+    rdfs:comment "1:事業者所有機体、2:レンタル機体"@ja .
+
+:hasOwnerType rdf:type owl:ObjectProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range :OwnerType ;
+    rdfs:label "機体所有種別"@ja .
+
+:ownerId rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Aircraft ;
+    rdfs:range xsd:string ;
+    rdfs:label "所有者ID"@ja ;
+    rdfs:comment "レンタル事業者を含む事業者を識別するID"@ja .
+
+
+# idとname
+:id rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:label "ID"@ja .
+
+
+:name rdf:type owl:DatatypeProperty ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:label "名前"@ja .

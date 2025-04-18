@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./certs
+        target: /certificates
+      - type: bind
+        source: ./backend/logs
+        target: /app/logs
+    depends_on:
+      - fuseki
+    environment:
+      USE_SYSTEM_CA_CERTS: 1
+      SPRING_API_KEY: ${SPRING_API_KEY}
+      MQTT_BROKER_USERNAME: ${MQTT_BROKER_USERNAME}
+      MQTT_BROKER_PASSWORD: ${MQTT_BROKER_PASSWORD}
+    env_file:
+      - path: ./.env.shared
+        required: true
+    networks:
+      - app-network
+
+  fuseki:
+    build:
+      context: ./fuseki
+      dockerfile: Dockerfile
+    environment:
+      ADMIN_PASSWORD: ${FUSEKI_ADMIN_PASSWORD}
+      AIRWAY_RESERVATION_API_KEY: ${AIRWAY_RESERVATION_API_KEY}
+      JVM_ARGS: ${FUSEKI_JVM_ARGS}
+    ports:
+      - "3030:3030"
+    volumes:
+      - fuseki-data:/fuseki
+      - ./fuseki-config/log4j2.properties:/jena-fuseki/log4j2.properties
+      - ./fuseki/datasets:/jena-fuseki/datasets
+    env_file:
+      - path: ./.env.fuseki
+        required: true
+      - path: ./.env.shared
+        required: true
+    restart: always
+    networks:
+      - app-network
+
+volumes:
+  fuseki-data:
+
+# use this network to share network with mock services
+networks:
+  app-network:
+    name: app-network
+    driver: bridge

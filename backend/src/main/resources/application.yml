@@ -1,0 +1,59 @@
+app:
+  version: @project.version@ # Retrieved from pom.xml
+  versionHeaderName: App-Version
+
+server:
+  port: 8080
+  url: ${API_URL}
+
+auth:
+  header: Authorization
+  apiKey: ${SPRING_API_KEY}
+
+spring:
+  application:
+    name: sparql-service
+  autoconfigure:
+    exclude: springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+mqtt:
+  broker:
+    address: ${MQTT_BROKER_ADDRESS}
+    # MQTT broker credentials (default value is empty)
+    username: ${MQTT_BROKER_USERNAME:}
+    password: ${MQTT_BROKER_PASSWORD:}
+    # clientId: default
+    timeout:
+      completion: 30000
+      disconnection: 5000
+      connection: 30
+  topic: airway/administrator/airwayInformation/+
+
+
+# Fuseki Configuration
+fuseki:
+  ontology-endpoint: http://fuseki:3030/ontology/
+  resource-endpoint: http://fuseki:3030/resource/
+
+# External DroneHighway server
+drone-highway:
+  api:
+    url: ${DRONE_HIGHWAY_API_URL}
+
+drone-port:
+  api:
+    url: ${DRONE_PORT_API_URL}
+    requiredParameter:
+      minLat: 24.396308
+      minLon: 122.93457
+      maxLat: 45.551483
+      maxLon: 153.986672
+
+open-api:
+  server: https://rdfserver.drone-sample1.com
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.example.sparqlservice: ${SPRING_LOG_LEVEL:INFO}
+    # org.springframework.security: TRACE
